@@ -49,4 +49,25 @@ class ScraperService {
       return [];
     }
   }
+
+  Future<String?> fetchMovieIframeUrl(String link) async {
+    try {
+      if (link.isEmpty) return null;
+
+      final response = await http.get(Uri.parse(link));
+
+      if (response.statusCode == 200) {
+        final document = parser.parse(response.body);
+        final iframeElement = document.querySelector('.gmr-embed-responsive iframe');
+
+        if (iframeElement != null) {
+          return iframeElement.attributes['src'];
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching iframe URL: $e');
+      return null;
+    }
+  }
 }
